@@ -1,12 +1,10 @@
 import { computed, Ref } from "@vue/composition-api"
-import { ITodo } from "../store"
+import { RootState } from "../store"
 
-export default function useTodo(status: Ref<boolean> ,todo: Ref<Array<ITodo>>) {
+export default function useTodo(status: Ref<boolean> ,state: RootState) {
    const calcTodo = computed(() => {
-     return todo.value.filter(todoItem => todoItem.done === status.value)
+     return state.todo.filter(todoItem => todoItem.done === status.value)
    })
 
-   return {
-     calcTodo
-   }
+   return calcTodo
 }

@@ -18,7 +18,7 @@
       <p>列表</p>
       <div v-for="todoItem in calcTodo" :key="todoItem.id">
         <div>
-          <input type="checkbox" v-model="todoItem.done" />
+          <input type="checkbox" :checked="todoItem.done" @change="updateTodo({ done: $event.target.value, content: todoItem.content, id: todoItem.id })" />
           <template>
             <span v-show="todoItem.id !== slectedUpdateTodoItem.id">
               {{ todoItem.content }}
@@ -54,45 +54,46 @@
 
 <script lang="ts">
 import {
+  computed,
   defineComponent,
   reactive,
-  ref,
-  toRefs,
-  computed,
+  ref
 } from "@vue/composition-api";
 import useTodo from "./compose/useTodo";
 import { ITodo } from "./store";
 
 export default defineComponent({
-  setup() {
+  setup(props, context) {
+    // data
     const status = ref(false);
     const userInput = ref("");
-    const todo = ref<Array<ITodo>>([]);
-    const { calcTodo } = useTodo(status, todo);
+    const store = (context.root as any).$store
+    const calcTodo = useTodo(status, store.state)
     const slectedUpdateTodoItem = reactive<ITodo>({
       content: "",
       id: "",
       done: false,
     });
-
+    
+    // methods
     const createTodo = (val: string) => ({
       id: `${Date.now()}`,
       content: val,
       done: false,
     });
 
-    const addTodo = (val: string) => {
+    const addTodo = () => {
       const todoItem = createTodo(userInput.value);
-      todo.value = [...todo.value, todoItem];
+      store.dispatch("addTodo", todoItem)
       userInput.value = ""
     };
 
     const deleteTodo = (id: string) => {
-      todo.value = todo.value.filter((x) => x.id !== id);
+      store.dispatch("delTodo", id)
     };
 
     const updateTodo = (todoItem: ITodo) => {
-      todo.value = todo.value.map(x =>  x.id === todoItem.id ? { ...x, ...todoItem } : x);
+      store.dispatch("updateTodo", todoItem)
       clearSelectedTodo();
     };
 
@@ -112,14 +113,13 @@ export default defineComponent({
     return {
       status,
       userInput,
-      todo,
       calcTodo,
       addTodo,
       deleteTodo,
       updateTodo,
       slectedUpdateTodoItem,
       updateSelectedTodo,
-      clearSelectedTodo,
+      clearSelectedTodo
     };
   },
 });
