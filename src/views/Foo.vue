@@ -1,34 +1,14 @@
 <script>
 import Bar from "./Bar.vue"
+import Bob from "./Bob.vue"
+
 export default {
-  props: {
-    message: {
-      type: String
-    }
-  },
-  components: {
-    Bar
-  },
   render(h) {
-    return h("div", {
-      class: {
-        foo: true
+    return h(Bar, {
+      scopedSlots: {
+        bar: () => h(Bob)
       }
-    },[
-      h("Bar", {
-        props: {
-          message: this.message
-        },
-        scopedSlots: {
-          default({ text }) {
-            return h("a", text)
-          },
-          bar({ value }) {
-            return h("p", value)
-          }
-        }
-      })
-    ])
+    })
   }
 }
 </script>

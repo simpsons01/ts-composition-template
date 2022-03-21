@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-      <foo message="123" />
+    <Foo />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from '@vue/composition-api'
+import { defineComponent } from '@vue/composition-api'
 import Foo from "./views/Foo.vue"
 
 export default defineComponent({
@@ -14,9 +14,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<div>
- <p>
-   <a>123</a>
- </p>
-</div>
